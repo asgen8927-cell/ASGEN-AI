@@ -1,0 +1,6 @@
+{
+  "name": "WhatsApp Mockup Studio",
+  "description": "A high-fidelity WhatsApp dark mode mockup studio with automated link preview scraping, custom metadata overrides, contact header customization, and direct PNG export.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
