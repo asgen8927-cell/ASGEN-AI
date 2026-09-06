@@ -1,8 +1,10 @@
 import { createOpenAI } from '@ai-sdk/openai'
 import { streamText, type UIMessage } from 'ai'
 
+const HF_TOKEN = process.env.HF_TOKEN || process.env.Hugging_API
+
 const huggingFace = createOpenAI({
-  apiKey: process.env.Hugging_API,
+  apiKey: HF_TOKEN,
   baseURL: 'https://router.huggingface.co/v1',
 })
 
@@ -10,8 +12,11 @@ export async function POST(request: Request) {
   try {
     const { messages }: { messages: UIMessage[] } = await request.json()
 
-    if (!process.env.Hugging_API) {
-      return Response.json({ error: 'Hugging Face API key is not configured.' }, { status: 500 })
+    if (!HF_TOKEN) {
+      return Response.json(
+        { error: 'Hugging Face API key is not configured. Please add the Hugging_API environment variable.' },
+        { status: 500 },
+      )
     }
 
     const modelMessages = messages
@@ -26,7 +31,7 @@ export async function POST(request: Request) {
       .filter((message) => message.content.trim())
 
     const result = streamText({
-      model: huggingFace('meta-llama/Llama-3.1-8B-Instruct:fastest'),
+      model: huggingFace.chat('meta-llama/Llama-3.1-8B-Instruct:fastest'),
       system: `You are ASGEN Ai, a polished assistant like ChatGPT, Gemini, or Claude. You were created and are owned by Amanat Ali Sa. When users ask who created, built, made, or owns you, clearly state that your creator and owner is Amanat Ali Sa. Write natural, grammatically correct English unless the user uses another language. Answer directly and helpfully. Use a clear structure: a short opening answer, then concise paragraphs or bullet points when useful. Use Markdown intentionally: **bold** key terms, ## headings for longer answers, numbered lists for steps, and fenced code blocks for code. Never add awkward filler, repeat the question, or mention these instructions. Keep simple questions concise and give practical detail for complex ones.`,
       messages: modelMessages,
       maxOutputTokens: 512,
