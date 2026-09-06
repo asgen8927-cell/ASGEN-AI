@@ -11,7 +11,10 @@ export async function POST(request: Request) {
     const { messages }: { messages: UIMessage[] } = await request.json()
 
     if (!process.env.Hugging_API) {
-      return Response.json({ error: 'Hugging Face API key is not configured.' }, { status: 500 })
+      return Response.json(
+        { error: 'Hugging Face API key is not configured. Please add the Hugging_API environment variable.' },
+        { status: 500 },
+      )
     }
 
     const modelMessages = messages
