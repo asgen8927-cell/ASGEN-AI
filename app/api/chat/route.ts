@@ -1,8 +1,10 @@
 import { createOpenAI } from '@ai-sdk/openai'
 import { streamText, type UIMessage } from 'ai'
 
+const HF_TOKEN = process.env.HF_TOKEN || process.env.Hugging_API
+
 const huggingFace = createOpenAI({
-  apiKey: process.env.Hugging_API,
+  apiKey: HF_TOKEN,
   baseURL: 'https://router.huggingface.co/v1',
 })
 
@@ -10,7 +12,7 @@ export async function POST(request: Request) {
   try {
     const { messages }: { messages: UIMessage[] } = await request.json()
 
-    if (!process.env.Hugging_API) {
+    if (!HF_TOKEN) {
       return Response.json(
         { error: 'Hugging Face API key is not configured. Please add the Hugging_API environment variable.' },
         { status: 500 },
